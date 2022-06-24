@@ -56,6 +56,11 @@ Create your Schema-linux.json file with the imagedigst and image tag in the foll
 
 If an image with the specific digest already exists it will ignore the push.
 
+Run the Script
+```
+./docker-push
+```
+
 ## GitHub Actions
 There are three workflows that use github actions to build the tool and then run the workflow based on the schema based on the operating system for the image(LINUX/WINDOWS)
 
