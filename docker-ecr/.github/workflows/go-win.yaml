@@ -1,0 +1,56 @@
+name: Go
+
+on:
+  push:
+    branches: [ main ]
+    paths:
+      - schema-win.json #This is triggered when you run update windows schema
+
+jobs:
+  build:
+    runs-on: windows-latest
+    steps:
+    - uses: actions/checkout@v3
+
+    - name: Set up Go
+      uses: actions/setup-go@v3
+      with:
+        go-version: 1.18
+
+    - name: Configure AWS credentials
+      uses: aws-actions/configure-aws-credentials@v1
+      with:
+        aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+        aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+        aws-region: us-east-1
+
+    - name: Login to Amazon ECR
+      id: login-ecr
+      uses: aws-actions/amazon-ecr-login@v1
+
+    - name: Install dependencies and push docker-image
+      env:
+        ECR_REGISTRY: ${{ secrets.ECR_REGISTRY }}
+        ECR_REGISTRY_NAME: ${{ secrets.ECR_REGISTRYNAME }}
+        ECR_REGION: "us-east-1"
+        Schemafile: "schema-win.json" # This would take the windows schema file to run on windows oeprating system
+      run: |
+        Write-Host "Allow docker to push foreign layers to ECR"
+        $dockerConfig = @"
+          {
+              "allow-nondistributable-artifacts": [
+                "0.0.0.0/0"
+              ]
+          }
+        "@
+        $dockerConfig | Out-File -NoNewline -FilePath "C:\ProgramData\docker\config\daemon.json" -Encoding ascii -Force -Confirm:$false -ErrorAction Stop
+        Write-Host "Apply changes - Restart docker..."
+        Get-Service docker | Restart-Service
+        Get-Content  "C:\ProgramData\docker\config\daemon.json"
+        Get-Service docker
+        go version
+        go install cuelang.org/go/cmd/cue@latest
+        tar xvzf docker-ecr_0.5_windows_amd64.tar.gz
+        ./docker-ecr
+
+

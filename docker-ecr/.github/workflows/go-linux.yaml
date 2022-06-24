@@ -1,0 +1,49 @@
+name: Go
+
+on:
+  push:
+    branches: [ main ]
+    paths:
+      - schema-linux.json #This is triggered when you run update linux schema
+
+permissions:
+  contents: write
+  packages: write
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v3
+
+    - name: Set up Go
+      uses: actions/setup-go@v3
+      with:
+        go-version: 1.18
+
+    - name: Configure AWS credentials
+      uses: aws-actions/configure-aws-credentials@v1
+      with:
+        aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+        aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+        aws-region: us-east-1
+
+    - name: Login to Amazon ECR
+      id: login-ecr
+      uses: aws-actions/amazon-ecr-login@v1
+
+    - name: Install dependencies and push docker-image
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        ECR_REGISTRY: ${{ secrets.ECR_REGISTRY }}
+        ECR_REGISTRY_NAME: ${{ secrets.ECR_REGISTRYNAME }}
+        ECR_REGION: "us-east-1"
+        Schemafile: "schema-linux.json" # This would take the linux schema file to run on windows oeprating system
+        TAG: 0.5
+      run: |
+        go version
+        go install cuelang.org/go/cmd/cue@latest
+        sudo tar -xzvf docker-ecr_${TAG}_linux_amd64.tar.gz
+        sudo chmod +x docker-ecr
+        ./docker-ecr
+

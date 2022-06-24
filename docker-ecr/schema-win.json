@@ -1,0 +1,12 @@
+{
+    "imageIds": [
+        {
+            "imageDigest": "sha256:2ea10cfecbe979615564c0e4096307ec887aba2c7a3694a56fe936a7cf5dbbc2",
+            "imageTag": "golang:1.18.2"
+        },
+        {
+            "imageDigest": "sha256:2ea10cfecbe979615564c0e4096307ec887aba2c7a3694a56fe936a7cf5dbbc2",
+            "imageTag": "golang:1.18.2"
+        }
+    ]
+}

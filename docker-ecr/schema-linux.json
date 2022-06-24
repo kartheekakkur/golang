@@ -1,0 +1,8 @@
+{
+    "imageIds": [
+        {
+            "imageDigest": "sha256:af6de82006b8c1296ec539f3cb628956006d0df6ac6b93cb484c1c030a148257",
+            "imageTag": "golang:1.17-buster"
+        }
+    ]
+}
