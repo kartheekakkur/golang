@@ -65,8 +65,10 @@ Run the Script
 There are three workflows that use github actions to build the tool and then run the workflow based on the schema based on the operating system for the image(LINUX/WINDOWS)
 
 1. release.yaml - This workflow complies and builds the releases based on the operating system, currently this supports windows and linux of architecture amd64. 
-  a. It uses https://goreleaser.com/ to build the artifacts, this generates docker-ecr_0.5_linux_amd64.tar.gz and docker-ecr_0.5_windows_amd64.tar.gz
-  b. .goreleaser.yaml defines what needs to built.
+
+      - It uses https://goreleaser.com/ to build the artifacts
+
+      - .goreleaser.yaml defines what needs to built.
 
 2. go-linux.yaml- Here we configure the AWS Creds , ECR and use the build from the previous step to trigger and push the linux based images into ECR.
 
